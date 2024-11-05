@@ -1,0 +1,33 @@
+api_platform:
+    enable_swagger: true
+    enable_swagger_ui: true
+    title: Car Catalog API
+    version: 1.0.0
+    formats:
+        jsonld: ['application/ld+json']
+        json: ['application/json']
+        html: ['text/html']
+        multipart/form-data: ['multipart/form-data']
+    docs_formats:
+        jsonld: ['application/ld+json']
+        jsonopenapi: ['application/vnd.openapi+json']
+        html: ['text/html']
+    patch_formats:
+        json: ['application/json']
+    mapping:
+        paths:
+            - '%kernel.project_dir%/src/Domain/Entity'
+    defaults:
+        pagination_client_items_per_page: true
+        pagination_items_per_page: 20
+        pagination_maximum_items_per_page: 100
+    collection:
+        pagination:
+            items_per_page_parameter_name: pageSize
+    eager_loading:
+        max_joins: 50
+    exception_to_status:
+        ApiPlatform\Core\Exception\FilterValidationException: 400
+        ApiPlatform\Core\Exception\ItemNotFoundException: 404
+        ApiPlatform\Core\Exception\InvalidArgumentException: 400
+        DomainException: 400
