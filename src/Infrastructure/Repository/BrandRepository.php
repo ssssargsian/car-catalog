@@ -5,6 +5,7 @@ use App\Domain\Entity\Brand;
 use App\Domain\Repository\BrandRepositoryInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Stringable;
 
 /**
  * @method Brand|null find($id, $lockMode = null, $lockVersion = null)
@@ -17,6 +18,11 @@ final class BrandRepository extends ServiceEntityRepository implements BrandRepo
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Brand::class);
+    }
+
+    public function findById(Stringable|string $id): ?Brand
+    {
+        return $this->find($id);
     }
 
     public function add(Brand $brand, bool $flush = true): void

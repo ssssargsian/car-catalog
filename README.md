@@ -32,8 +32,6 @@ m start
 ```bash
 m composer install
 ```
-Генерируем ssl-ключи для JWT-токенов:
-```bash
-mkdir -p var/jwt
-m c lexik:jwt:generate-keypair
-```
+
+АПИ для Брендов
+![brand-api.png](/docs/image/brand-api.png)
