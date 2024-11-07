@@ -72,11 +72,11 @@ class Brand
 {
     #[ORM\Id]
     #[ORM\Column(type: UuidType::NAME, unique: true)]
-    #[Groups(['brand:read', 'model:read'])]
+    #[Groups(['brand:read', 'model:read', 'specification:read'])]
     private UuidInterface $id;
 
     #[ORM\Column(type: Types::STRING, length: 255)]
-    #[Groups(['brand:read', 'model:read'])]
+    #[Groups(['brand:read', 'model:read', 'specification:read'])]
     private string $name;
 
     public function __construct(

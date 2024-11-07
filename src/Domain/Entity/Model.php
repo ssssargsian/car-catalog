@@ -67,16 +67,16 @@ class Model
 {
     #[ORM\Id]
     #[ORM\Column(type: UuidType::NAME, unique: true)]
-    #[Groups(['model:read'])]
+    #[Groups(['model:read', 'specification:read'])]
     private UuidInterface $id;
 
     #[ORM\Column(type: Types::STRING, length: 255)]
-    #[Groups(['model:read'])]
+    #[Groups(['model:read', 'specification:read'])]
     private string $name;
 
     #[ORM\ManyToOne(targetEntity: Brand::class)]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(['model:read'])]
+    #[Groups(['model:read', 'specification:read'])]
     private Brand $brand;
 
     public function __construct(
