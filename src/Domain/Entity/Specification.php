@@ -2,6 +2,10 @@
 
 namespace App\Domain\Entity;
 
+use ApiPlatform\Doctrine\Orm\Filter\OrderFilter;
+use ApiPlatform\Doctrine\Orm\Filter\RangeFilter;
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\Get;
@@ -16,13 +20,13 @@ use App\Domain\Enum\BodyType;
 use App\Domain\Enum\DriveType;
 use App\Domain\Enum\FuelType;
 use App\Infrastructure\Repository\SpecificationRepository;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Doctrine\UuidType;
 use Ramsey\Uuid\Uuid;
+use Ramsey\Uuid\UuidInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Serializer\Annotation\Groups;
-use Ramsey\Uuid\UuidInterface;
-use Doctrine\DBAL\Types\Types;
 
 /**
  * @final
@@ -66,6 +70,21 @@ use Doctrine\DBAL\Types\Types;
     paginationClientEnabled: true,
     paginationEnabled: true,
 )]
+#[ApiFilter(SearchFilter::class, properties: [
+    'fuelType' => 'exact',
+    'bodyType' => 'exact',
+    'driveType' => 'exact',
+])]
+#[ApiFilter(RangeFilter::class, properties: [
+    'engineVolume',
+    'power',
+    'fuelTankCapacity',
+])]
+#[ApiFilter(OrderFilter::class, properties: [
+    'engineVolume',
+    'power',
+    'fuelTankCapacity',
+], arguments: ['orderParameterName' => 'order'])]
 class Specification
 {
     #[ORM\Id]
@@ -110,7 +129,7 @@ class Specification
         int $fuelTankCapacity,
         DriveType $driveType,
         BodyType $bodyType,
-        ?UuidInterface $id = null
+        ?UuidInterface $id = null,
     ) {
         $this->model = $model;
         $this->fuelType = $fuelType;
