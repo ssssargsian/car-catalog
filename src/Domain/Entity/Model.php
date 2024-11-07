@@ -2,6 +2,8 @@
 
 namespace App\Domain\Entity;
 
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\Get;
@@ -63,6 +65,9 @@ use Symfony\Component\Serializer\Annotation\Groups;
     paginationClientEnabled: true,
     paginationEnabled: true,
 )]
+#[ApiFilter(SearchFilter::class, properties: [
+    'name' => 'ipartial',
+])]
 class Model
 {
     #[ORM\Id]
