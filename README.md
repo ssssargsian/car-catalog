@@ -33,5 +33,5 @@ m start
 m composer install
 ```
 
-АПИ для Брендов
-![brand-api.png](/docs/image/brand-api.png)
+Car Catalog API
+![full-api.png](/docs/image/full-api.png)

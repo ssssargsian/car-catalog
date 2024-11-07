@@ -5,6 +5,7 @@ use App\Domain\Entity\Specification;
 use App\Domain\Repository\SpecificationRepositoryInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Stringable;
 
 /**
  * @method Specification|null find($id, $lockMode = null, $lockVersion = null)
@@ -17,6 +18,11 @@ final class SpecificationRepository extends ServiceEntityRepository implements S
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Specification::class);
+    }
+
+    public function findById(Stringable|string $id): ?Specification
+    {
+        return $this->find($id);
     }
 
     public function add(Specification $specification, bool $flush = true): void

@@ -2,6 +2,16 @@
 
 namespace App\Domain\Entity;
 
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\OpenApi\Model\Operation;
+use App\Application\Command\Specification\CreateCommand;
+use App\Application\Command\Specification\UpdateCommand;
+use App\Application\Controller\Specification\DeleteController;
 use App\Domain\Enum\BodyType;
 use App\Domain\Enum\DriveType;
 use App\Domain\Enum\FuelType;
@@ -9,6 +19,7 @@ use App\Infrastructure\Repository\SpecificationRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Doctrine\UuidType;
 use Ramsey\Uuid\Uuid;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Ramsey\Uuid\UuidInterface;
 use Doctrine\DBAL\Types\Types;
@@ -18,6 +29,43 @@ use Doctrine\DBAL\Types\Types;
  */
 #[ORM\Entity(repositoryClass: SpecificationRepository::class)]
 #[ORM\Table(name: 'specifications')]
+#[ApiResource(
+    operations: [
+        new Get(
+            openapi: new Operation(summary: 'Получить информацию по конкретной спецификации'),
+            normalizationContext: ['groups' => ['specification:read']],
+        ),
+        new GetCollection(
+            openapi: new Operation(summary: 'Получить список спецификаций'),
+            normalizationContext: ['groups' => ['specification:read']],
+        ),
+        new Post(
+            status: Response::HTTP_CREATED,
+            openapi: new Operation(summary: 'Создание спецификации'),
+            normalizationContext: ['groups' => ['specification:read']],
+            input: CreateCommand::class,
+            output: self::class,
+            messenger: 'input',
+        ),
+        new Patch(
+            status: Response::HTTP_OK,
+            openapi: new Operation(summary: 'Обновление спецификации'),
+            normalizationContext: ['groups' => ['specification:read']],
+            input: UpdateCommand::class,
+            output: self::class,
+            messenger: 'input',
+        ),
+        new Delete(
+            status: Response::HTTP_NO_CONTENT,
+            controller: DeleteController::class,
+            openapi: new Operation(summary: 'Удаление спецификации'),
+            normalizationContext: ['groups' => ['specification:read']],
+            output: false,
+        ),
+    ],
+    paginationClientEnabled: true,
+    paginationEnabled: true,
+)]
 class Specification
 {
     #[ORM\Id]
