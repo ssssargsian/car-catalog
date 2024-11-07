@@ -5,6 +5,7 @@ use App\Domain\Entity\Model;
 use App\Domain\Repository\ModelRepositoryInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Stringable;
 
 /**
  * @method Model|null find($id, $lockMode = null, $lockVersion = null)
@@ -17,6 +18,11 @@ final class ModelRepository extends ServiceEntityRepository implements ModelRepo
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Model::class);
+    }
+
+    public function findById(Stringable|string $id): ?Model
+    {
+        return $this->find($id);
     }
 
     public function add(Model $model, bool $flush = true): void
