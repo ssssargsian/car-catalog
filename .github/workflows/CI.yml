@@ -1,4 +1,4 @@
-name: Lint PHP with Composer and ECS
+name: Lint PHP with Composer, ECS, and PHPUnit
 
 on:
   push:
@@ -12,6 +12,21 @@ jobs:
   check:
     runs-on: ubuntu-latest
 
+    services:
+      postgres:
+        image: postgres:13
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: test_db
+        options: >
+          --health-cmd="pg_isready -U postgres"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+        ports:
+          - 5432:5432
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -20,7 +35,7 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.3'
-          extensions: mbstring, intl, zip
+          extensions: mbstring, intl, zip, pdo_pgsql
           coverage: none
 
       - name: Install Composer dependencies
@@ -29,5 +44,16 @@ jobs:
       - name: Run ECS (EasyCodingStandard)
         run: php vendor/bin/ecs check src
 
+      - name: Prepare Database
+        env:
+          DATABASE_URL: "pgsql://postgres:postgres@127.0.0.1:5432/test_db"
+        run: |
+          php bin/console doctrine:database:drop --if-exists --force --env=test
+          php bin/console doctrine:database:create --env=test
+          php bin/console doctrine:migrations:migrate --no-interaction --env=test
+          php bin/console doctrine:fixtures:load --no-interaction --env=test
+
       - name: Run PHPUnit
+        env:
+          DATABASE_URL: "pgsql://postgres:postgres@127.0.0.1:5432/test_db"
         run: php vendor/bin/phpunit --no-coverage
