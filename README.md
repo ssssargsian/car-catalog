@@ -35,3 +35,21 @@ m composer install
 
 Car Catalog API
 ![full-api.png](/docs/image/full-api.png)
+
+Дополнительные задания (не обязательно, но будет плюсом):
+5. Аналитический SQL-запрос:
+```sql
+SELECT
+    brand.name AS brand_name,
+    AVG(spec.power) AS average_power
+FROM
+    brands AS brand
+JOIN
+    models AS model ON brand.id = model.brand_id
+JOIN
+    specifications AS spec ON model.id = spec.model_id
+GROUP BY
+    brand.name
+HAVING
+    AVG(spec.power) > 200;
+```
