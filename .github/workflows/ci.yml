@@ -1,4 +1,4 @@
-name: Lint PHP with Composer and ECS
+name: CI Pipeline
 
 on:
   push:
@@ -9,8 +9,31 @@ on:
       - master
 
 jobs:
-  check:
+  ecs-lint:
     runs-on: ubuntu-latest
+    name: Lint PHP with ECS (EasyCodingStandard)
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: mbstring, intl, zip
+          coverage: none
+
+      - name: Install Composer dependencies
+        run: composer install --no-scripts
+
+      - name: Run ECS (EasyCodingStandard)
+        run: php vendor/bin/ecs check src
+
+  test:
+    needs: ecs-lint
+    runs-on: ubuntu-latest
+    name: Run PHPUnit Tests
 
     steps:
       - name: Checkout code
@@ -30,9 +53,6 @@ jobs:
 
       - name: Install Composer dependencies
         run: docker-compose exec api composer install --no-scripts
-
-      - name: Run ECS (EasyCodingStandard)
-        run: docker-compose exec api php vendor/bin/ecs check src
 
       - name: Initialize database
         run: |

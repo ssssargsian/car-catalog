@@ -1,5 +1,5 @@
 # Тестовое задание в команду Дром.Контент
-
+![Test Status](https://img.shields.io/github/actions/workflow/status/ssssargsian/car-catalog/ci.yml?label=CI&logo=github)
 ## Описание проектного окружения
 
 Проект состоит из нескольких сервисов, работающих через Docker:
