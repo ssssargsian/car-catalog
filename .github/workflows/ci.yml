@@ -28,13 +28,6 @@ jobs:
       - name: Build and run Docker containers
         run: docker-compose up -d --build
 
-      - name: Wait for PostgreSQL
-        run: |
-          until docker-compose exec api pg_isready -h postgres -U car; do
-            >&2 echo "Postgres is unavailable - sleeping"
-            sleep 5
-          done
-
       - name: Install Composer dependencies
         run: docker-compose exec api composer install --no-scripts
 
