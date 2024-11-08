@@ -53,4 +53,12 @@ dc: ## Удалить контейнеры
 .PHONY: rmc
 rmc:
 	@rm -rf ./var/cache
+.PHONY: initdb
+initdb: ## Создание дампа с демо-данными
+	@echo "Initializing test database..."
+	@rm -rf var/cache/test || true
+	@$(DCE_API) sh -c "$(DISABLE_XDEBUG) php bin/console --env=test --no-interaction doctrine:database:drop --force --if-exists"
+	@$(DCE_API) sh -c "$(DISABLE_XDEBUG) php bin/console --env=test --no-interaction doctrine:database:create"
+	@$(DCE_API) sh -c "$(DISABLE_XDEBUG) php bin/console --env=test --no-interaction doctrine:migrations:migrate"
+	@$(DCE_API) sh -c "$(DISABLE_XDEBUG) php bin/console --env=test --no-interaction doctrine:fixtures:load"
 endif

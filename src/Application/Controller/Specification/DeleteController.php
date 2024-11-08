@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Application\Controller\Specification;
 
 use App\Application\Command\Specification\DeleteCommand;
-use App\Domain\Entity\Model;
+use App\Domain\Entity\Specification;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Messenger\MessageBusInterface;
@@ -18,9 +18,9 @@ final class DeleteController extends AbstractController
     ) {
     }
 
-    public function __invoke(Model $model): Response
+    public function __invoke(Specification $specification): Response
     {
-        $envelope = $this->commandBus->dispatch(new DeleteCommand($model->getId()));
+        $envelope = $this->commandBus->dispatch(new DeleteCommand($specification->getId()));
 
         $handledStamp = $envelope->last(HandledStamp::class);
         if ($handledStamp) {

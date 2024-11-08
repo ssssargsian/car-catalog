@@ -22,6 +22,7 @@ final readonly class CreateCommandHandler
     public function __invoke(CreateCommand $command): Specification
     {
         $model = $this->modelRepository->findById($command->modelId);
+
         if ($model === null) {
             throw new BadRequestException('Model not found');
         }

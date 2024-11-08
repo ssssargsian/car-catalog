@@ -15,6 +15,8 @@ use App\Application\Command\Brand\CreateCommand;
 use App\Application\Command\Brand\UpdateCommand;
 use App\Application\Controller\Brand\DeleteController;
 use App\Infrastructure\Repository\BrandRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
@@ -79,6 +81,10 @@ class Brand
     #[Groups(['brand:read', 'model:read', 'specification:read'])]
     private string $name;
 
+    #[ORM\OneToMany(targetEntity: Model::class, mappedBy: 'brand', cascade: ['persist', 'remove'], orphanRemoval: true)]
+    #[Groups(['brand:read'])]
+    private Collection $models;
+
     public function __construct(
         string $name,
         ?UuidInterface $id = null,
@@ -86,6 +92,7 @@ class Brand
         $this->name = $name;
 
         $this->id = $id ?? Uuid::uuid7();
+        $this->models = new ArrayCollection();
     }
 
     public function getId(): UuidInterface
@@ -101,6 +108,30 @@ class Brand
     public function setName(string $name): self
     {
         $this->name = $name;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<array-key, Model>
+     */
+    public function getModels(): Collection
+    {
+        return $this->models;
+    }
+
+    public function addModel(Model $model): self
+    {
+        if (!$this->models->contains($model)) {
+            $this->models->add($model);
+        }
+
+        return $this;
+    }
+
+    public function removeModel(Model $model): self
+    {
+        $this->models->remove($model);
 
         return $this;
     }

@@ -22,13 +22,14 @@ final readonly class CreateCommandHandler
     public function __invoke(CreateCommand $command): Model
     {
         $brand = $this->brandRepository->findById($command->brandId);
+
         if ($brand === null) {
             throw new BadRequestException('Brand not found');
         }
 
         $model = new Model(
             name: $command->name,
-            brand:  $brand
+            brand: $brand,
         );
         $this->modelRepository->add($model);
 
