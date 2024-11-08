@@ -92,6 +92,11 @@ class Specification
     #[Groups(['specification:read'])]
     private UuidInterface $id;
 
+    #[ORM\ManyToOne(targetEntity: Model::class)]
+    #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
+    #[Groups(['specification:read'])]
+    private Model $model;
+
     #[ORM\Column(type: Types::STRING, length: 100, enumType: FuelType::class)]
     #[Groups(['specification:read'])]
     private FuelType $fuelType;
@@ -115,11 +120,6 @@ class Specification
     #[ORM\Column(type: Types::STRING, length: 50, enumType: BodyType::class)]
     #[Groups(['specification:read'])]
     private BodyType $bodyType;
-
-    #[ORM\ManyToOne(targetEntity: Model::class)]
-    #[ORM\JoinColumn(nullable: false)]
-    #[Groups(['specification:read'])]
-    private Model $model;
 
     public function __construct(
         Model $model,

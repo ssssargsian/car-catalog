@@ -21,7 +21,6 @@ final class DeleteController extends AbstractController
     public function __invoke(Brand $brand): Response
     {
         $envelope = $this->commandBus->dispatch(new DeleteCommand($brand->getId()));
-
         // Извлекаем ответ из обработанного штампа
         $handledStamp = $envelope->last(HandledStamp::class);
         if ($handledStamp) {

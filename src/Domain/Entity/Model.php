@@ -15,6 +15,8 @@ use App\Application\Command\Model\CreateCommand;
 use App\Application\Command\Model\UpdateCommand;
 use App\Application\Controller\Model\DeleteController;
 use App\Infrastructure\Repository\ModelRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Doctrine\UuidType;
@@ -80,9 +82,13 @@ class Model
     private string $name;
 
     #[ORM\ManyToOne(targetEntity: Brand::class)]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
     #[Groups(['model:read', 'specification:read'])]
     private Brand $brand;
+
+    #[ORM\OneToMany(targetEntity: Specification::class, mappedBy: 'model', cascade: ['persist', 'remove'], orphanRemoval: true)]
+    #[Groups(['model:read'])]
+    private Collection $specifications;
 
     public function __construct(
         string $name,
@@ -93,6 +99,7 @@ class Model
         $this->brand = $brand;
 
         $this->id = $id ?? Uuid::uuid7();
+        $this->specifications = new ArrayCollection();
     }
 
     public function getId(): UuidInterface
@@ -120,6 +127,30 @@ class Model
     public function setBrand(Brand $brand): self
     {
         $this->brand = $brand;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<array-key, Specification>
+     */
+    public function getSpecifications(): Collection
+    {
+        return $this->specifications;
+    }
+
+    public function addSpecification(Specification $specification): self
+    {
+        if (!$this->specifications->contains($specification)) {
+            $this->specifications->add($specification);
+        }
+
+        return $this;
+    }
+
+    public function removeSpecification(Specification $specification): self
+    {
+        $this->specifications->remove($specification);
 
         return $this;
     }
