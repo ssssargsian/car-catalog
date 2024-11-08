@@ -40,10 +40,9 @@ jobs:
           docker-compose exec api sh -c "php bin/console --env=test --no-interaction doctrine:database:create"
           docker-compose exec api sh -c "php bin/console --env=test --no-interaction doctrine:migrations:migrate"
           docker-compose exec api sh -c "php bin/console --env=test --no-interaction doctrine:fixtures:load"
-          docker-compose exec api sh -c "php vendor/bin/phpunit --no-coverage"
 
       - name: Run PHPUnit
-        run: docker-compose exec api ./vendor/bin/phpunit --configuration phpunit.xml
+        run: docker-compose exec api sh -c "php vendor/bin/phpunit --no-coverage
 
       - name: Tear down Docker containers
         if: always()
