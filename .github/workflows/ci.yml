@@ -1,0 +1,46 @@
+name: Lint PHP with Composer and ECS
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Build and run Docker containers
+        run: docker-compose up -d --build
+
+      - name: Wait for PostgreSQL
+        run: |
+          until docker exec api pg_isready -h postgres -U ${POSTGRES_USER}; do
+            >&2 echo "Postgres is unavailable - sleeping"
+            sleep 5
+          done
+
+      - name: Install Composer dependencies
+        run: docker exec api composer install --no-scripts
+
+      - name: Run ECS (EasyCodingStandard)
+        run: docker exec api php vendor/bin/ecs check src
+
+      - name: Initialize database and run tests
+        run: docker exec api make initdb
+
+      - name: Run PHPUnit
+        run: docker exec api ./vendor/bin/phpunit --configuration phpunit.xml
+
+      - name: Tear down Docker containers
+        if: always()
+        run: docker-compose down
