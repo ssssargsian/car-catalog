@@ -1,4 +1,5 @@
 # Тестовое задание в команду Дром.Контент
+![Test Status](https://img.shields.io/github/workflow/status/ssssargsian/car-catalog/CI?label=Tests&logo=github)
 
 ## Описание проектного окружения
 
